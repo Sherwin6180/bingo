@@ -1,23 +1,16 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import { Routes, Route } from "react-router-dom"; // 从 react-router-dom 导入 Routes 和 Route
+import Bingo from "./components/Bingo";
+import Create from './components/Create';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Routes>
+        <Route exact path="/" element={<Bingo />} />
+        <Route path="/create" element={<Create />} />
+      </Routes>
     </div>
   );
 }

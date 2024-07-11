@@ -1,0 +1,32 @@
+.App {
+  text-align: center;
+}
+
+.grid {
+  display: inline-block;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cell.marked {
+  background-color: #90ee90;
+}
+
+.celebration {
+  margin-top: 20px;
+  font-size: 24px;
+  color: #ff4500;
+}
