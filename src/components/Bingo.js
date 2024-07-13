@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import '../CSS/Bingo.css';
+import QRCode from 'qrcode.react';
+import LZString from 'lz-string';
 
 const encrypt = (data) => {
   const plainText = JSON.stringify(data);
-  const encoded = encodeURIComponent(plainText);
-  return btoa(encoded); // Base64 编码
+  const compressed = LZString.compressToEncodedURIComponent(plainText);
+  return compressed; // 使用 LZString 进行压缩编码
 };
 
-const decrypt = (encrypted) => {
-  const decoded = atob(encrypted); // Base64 解码
-  const plainText = decodeURIComponent(decoded);
+const decrypt = (compressed) => {
+  const plainText = LZString.decompressFromEncodedURIComponent(compressed);
   return JSON.parse(plainText); // 解析为对象
 };
 
@@ -26,11 +27,11 @@ const generateEncryptedString = () => {
     ]
   };
   const encryptedString = encrypt(data);
-  console.log("Encrypted String:", encryptedString);
+  // console.log("Encrypted String:", encryptedString);
   return encryptedString;
 };
 
-const App = () => {
+const Bingo = () => {
   const emptyGrid = Array(5).fill().map(() => Array(5).fill(''));
   const [grid, setGrid] = useState(emptyGrid);
   const [marked, setMarked] = useState(emptyGrid.map(row => row.map(() => false)));
@@ -78,7 +79,7 @@ const App = () => {
 
     // 检查对角线
     if (checkLine(newMarked.map((row, i) => row[i])) || checkLine(newMarked.map((row, i) => row[4 - i]))) {
-        return true;
+      return true;
     }
 
     return false;
@@ -93,6 +94,8 @@ const App = () => {
         console.error('Failed to copy: ', err);
       });
   };
+
+  const qrCodeUrl = `https://sherwin6180.github.io/bingo/#/open/${encryptedString}`;
 
   return (
     <div className="App">
@@ -126,10 +129,13 @@ const App = () => {
         <h2>Encrypted String:</h2>
         <button onClick={handleCopyToClipboard}>Copy Encrypted String</button>
       </div>
-      <a href={"#/create"}>create</a>
+      <div>
+        <QRCode value={qrCodeUrl} size={256} />
+        <p>扫描二维码以打开宾果游戏</p>
+      </div>
       {gameOver && <div className="celebration">🎉 Congratulations! 🎉</div>}
     </div>
   );
 };
 
-export default App;
+export default Bingo;

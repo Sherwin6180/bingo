@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import QRCode from 'qrcode.react';
+import LZString from 'lz-string';
+import html2canvas from 'html2canvas';
 import '../CSS/Bingo.css'; // 使用相同的样式
-
-const encrypt = (data) => {
-  const plainText = JSON.stringify(data);
-  const encoded = encodeURIComponent(plainText);
-  return btoa(encoded); // Base64 编码
-};
 
 const Create = () => {
   const emptyGrid = Array(5).fill().map(() => Array(5).fill(''));
   const [grid, setGrid] = useState(emptyGrid);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [encryptedString, setEncryptedString] = useState('');
+  const [compressedString, setCompressedString] = useState('');
+  const [imageSrc, setImageSrc] = useState('');
+  const qrCodeRef = useRef();
 
   const handleGridChange = (rowIndex, colIndex, value) => {
     const newGrid = grid.map((row, rIdx) =>
@@ -24,8 +23,17 @@ const Create = () => {
   const handleSubmit = () => {
     const flatWords = grid.flat();
     const data = { title, description, words: flatWords };
-    const encrypted = encrypt(data);
-    setEncryptedString(encrypted);
+    const jsonString = JSON.stringify(data);
+    const compressed = LZString.compressToEncodedURIComponent(jsonString);
+    setCompressedString(compressed);
+  };
+
+  const handleGenerateImage = async () => {
+    if (qrCodeRef.current) {
+      const canvas = await html2canvas(qrCodeRef.current);
+      const dataUrl = canvas.toDataURL('image/png');
+      setImageSrc(dataUrl);
+    }
   };
 
   return (
@@ -51,18 +59,27 @@ const Create = () => {
                 className="cell"
                 value={cell}
                 onChange={(e) => handleGridChange(rowIndex, colIndex, e.target.value)}
-                placeholder=""
+                placeholder="单词"
               />
             ))}
           </div>
         ))}
       </div>
       <button onClick={handleSubmit}>提交</button>
-      <a href={"#/"}>Bingo</a>
-      {encryptedString && (
+      {compressedString && (
         <div>
-          <h2>生成的加密字符串：</h2>
-          <p>{encryptedString}</p>
+          <h2>生成的二维码：</h2>
+          <div ref={qrCodeRef} style={{ textAlign: 'center' }}>
+            <p>来玩{title}宾果游戏吧！</p>
+            <QRCode value={`sherwin6180.github.io/bingo/#/open/${compressedString}`} size={256} />
+          </div>
+          <button onClick={handleGenerateImage}>生成图片</button>
+        </div>
+      )}
+      {imageSrc && (
+        <div>
+          <h2>保存二维码图片：</h2>
+          <img src={imageSrc} alt="QR Code" />
         </div>
       )}
     </div>
