@@ -3,6 +3,8 @@ import '../CSS/Bingo.css';
 import QRCode from 'qrcode.react';
 import LZString from 'lz-string';
 
+const domain = "https://sherwin6180.github.io/bingo";
+
 const encrypt = (data) => {
   const plainText = JSON.stringify(data);
   const compressed = LZString.compressToEncodedURIComponent(plainText);
@@ -95,7 +97,7 @@ const Bingo = () => {
       });
   };
 
-  const qrCodeUrl = `https://sherwin6180.github.io/bingo/#/open/${encryptedString}`;
+  const qrCodeUrl = `${domain}/#/open/${encryptedString}`;
 
   return (
     <div className="App">
