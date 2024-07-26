@@ -21,7 +21,7 @@ const Create = () => {
   useEffect(() => {
     // 检测屏幕宽度，设置默认字体大小
     const handleResize = () => {
-      if (window.innerWidth <= 1000) {
+      if (window.innerWidth <= 600) {
         setDefaultFontSize(0.5);
       } else {
         setDefaultFontSize(0.8);
@@ -70,10 +70,7 @@ const Create = () => {
       if (fontSize <= 0.1) break; // 防止字体大小过小
       cell.style.fontSize = `${fontSize}em`;
     }
-    if (window.innerWidth <= 1000) {
-      fontSize -= 0.1;
-      cell.style.fontSize = `${fontSize}em`;
-    }
+    if (windo)
   };
 
   const handleGenerateImage = async () => {
