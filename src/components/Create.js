@@ -47,6 +47,8 @@ const Create = () => {
       if (fontSize <= 0.1) break; // 防止字体大小过小
       cell.style.fontSize = `${fontSize}em`;
     }
+    fontSize -= 0.1;
+    cell.style.fontSize = `${fontSize}em`;
   };
 
   const handleGenerateImage = async () => {
