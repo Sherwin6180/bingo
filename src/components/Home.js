@@ -24,6 +24,7 @@ const Home = () => {
 
   return (
     <div className="App">
+      <img src="logo.png" alt="logo" style={{ width: '30em', height: 'auto'}} draggable="false"/>
       <h1>来玩宾果游戏吧！</h1>
       <div>
         <input
@@ -31,6 +32,7 @@ const Home = () => {
           value={inputValue}
           onChange={handleInputChange}
           placeholder="输入加密字符串"
+          style = {{margin: '1em'}}
         />
         <button onClick={handleOpen}>打开宾果游戏</button>
       </div>

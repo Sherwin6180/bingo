@@ -1,6 +1,7 @@
 .App{
   text-align: center;
   position: relative;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .grid {
@@ -63,7 +64,7 @@ button {
   border-radius: 4px;
   background-color: #4CAF50;
   color: white;
-  font-size: 16px;
+  font-size: 0.8em;
   cursor: pointer;
 }
 

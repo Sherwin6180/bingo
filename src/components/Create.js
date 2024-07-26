@@ -78,7 +78,7 @@ const Create = () => {
   };
 
   return (
-    <div className="Create">
+    <div className="App">
       <div>
         <input
           type="text"
