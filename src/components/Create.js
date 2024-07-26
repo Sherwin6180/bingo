@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import QRCode from 'qrcode.react';
 import LZString from 'lz-string';
 import html2canvas from 'html2canvas';
@@ -14,8 +14,31 @@ const Create = () => {
   const [compressedString, setCompressedString] = useState('');
   const [imageSrc, setImageSrc] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [defaultFontSize, setDefaultFontSize] = useState(0.8);
   const resultRef = useRef();
   const previewCellRefs = useRef([]);
+
+  useEffect(() => {
+    // 检测屏幕宽度，设置默认字体大小
+    const handleResize = () => {
+      if (window.innerWidth <= 600) {
+        setDefaultFontSize(0.5);
+      } else {
+        setDefaultFontSize(0.8);
+      }
+    };
+
+    // 初始调用一次
+    handleResize();
+
+    // 监听窗口大小变化
+    window.addEventListener('resize', handleResize);
+
+    // 清理事件监听器
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleGridChange = (rowIndex, colIndex, value) => {
     const newGrid = grid.map((row, rIdx) =>
@@ -39,16 +62,14 @@ const Create = () => {
     setCompressedString(compressed);
   };
 
-  const adjustFontSize = (cell, initialFontSize = 16) => {
+  const adjustFontSize = (cell, initialFontSize) => {
     let fontSize = initialFontSize; // 默认字体大小 em
-    cell.style.fontSize = `${fontSize}px`;
+    cell.style.fontSize = `${fontSize}em`;
     while (cell.scrollHeight > cell.clientHeight || cell.scrollWidth > cell.clientWidth) {
-      fontSize -= 2; // 逐步减少字体大小
-      if (fontSize <= 1) break; // 防止字体大小过小
-      cell.style.fontSize = `${fontSize}px`;
+      fontSize -= 0.1; // 逐步减少字体大小
+      if (fontSize <= 0.1) break; // 防止字体大小过小
+      cell.style.fontSize = `${fontSize}em`;
     }
-    fontSize -= 1;
-    cell.style.fontSize = `${fontSize}px`;
   };
 
   const handleGenerateImage = async () => {
@@ -56,7 +77,7 @@ const Create = () => {
       const previewCells = previewCellRefs.current;
       previewCells.forEach(cell => {
         if (cell) {
-          adjustFontSize(cell, 16);
+          adjustFontSize(cell, 0.5);
         }
       });
 
@@ -72,7 +93,7 @@ const Create = () => {
     const url = `${domain}/#/open/${compressedString}`;
     navigator.clipboard.writeText(url)
       .then(() => {
-        alert('URL已复制到剪切板！');
+        alert('URL copied to clipboard!');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -82,7 +103,7 @@ const Create = () => {
   const handleCopyEncryptedString = () => {
     navigator.clipboard.writeText(compressedString)
       .then(() => {
-        alert('加密字符串已复制到剪切板！');
+        alert('Encrypted string copied to clipboard!');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -163,7 +184,7 @@ const Create = () => {
                           alignItems: 'center',
                           justifyContent: 'center',
                           boxSizing: 'border-box',
-                          fontSize: '0.5em',
+                          fontSize: `${defaultFontSize}em`,
                         }}
                       >
                         {word}
