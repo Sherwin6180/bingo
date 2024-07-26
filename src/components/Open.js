@@ -19,6 +19,8 @@ const Open = () => {
   const [imageSrc, setImageSrc] = useState('');
   const [showQRCode, setShowQRCode] = useState(false);
   const resultRef = useRef();
+  const cellRefs = useRef([]);
+  const previewCellRefs = useRef([]);
 
   useEffect(() => {
     if (id) {
@@ -40,6 +42,24 @@ const Open = () => {
       }
     }
   }, [id]);
+
+  useEffect(() => {
+    cellRefs.current.forEach(cell => {
+      if (cell) {
+        adjustFontSize(cell, 0.8);
+      }
+    });
+  }, [grid]);
+
+  const adjustFontSize = (cell, initialFontSize = 0.8) => {
+    let fontSize = initialFontSize; // 默认字体大小 em
+    cell.style.fontSize = `${fontSize}em`;
+    while (cell.scrollHeight > cell.clientHeight || cell.scrollWidth > cell.clientWidth) {
+      fontSize -= 0.1; // 逐步减少字体大小
+      if (fontSize <= 0.1) break; // 防止字体大小过小
+      cell.style.fontSize = `${fontSize}em`;
+    }
+  };
 
   const handleClick = (row, col) => {
     if (gameOver) return;
@@ -77,14 +97,11 @@ const Open = () => {
 
   const handleGenerateImage = async () => {
     if (resultRef.current) {
-      // 临时调整样式
-      const cells = resultRef.current.querySelectorAll('.cell');
-      const originalStyles = [];
-      cells.forEach(cell => {
-        originalStyles.push({ width: cell.style.width, height: cell.style.height, fontSize: cell.style.fontSize });
-        cell.style.width = '60px';
-        cell.style.height = '60px';
-        cell.style.fontSize = '0.6em';
+      const previewCells = previewCellRefs.current;
+      previewCells.forEach(cell => {
+        if (cell) {
+          adjustFontSize(cell, 0.5);
+        }
       });
 
       resultRef.current.style.display = 'block';
@@ -92,22 +109,13 @@ const Open = () => {
       const dataUrl = canvas.toDataURL('image/png');
       setImageSrc(dataUrl);
       resultRef.current.style.display = 'none';
-
-      // 恢复原始样式
-      cells.forEach((cell, index) => {
-        cell.style.width = originalStyles[index].width;
-        cell.style.height = originalStyles[index].height;
-        cell.style.fontSize = originalStyles[index].fontSize;
-      });
-
-      setShowQRCode(true);
     }
   };
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(`${domain}/#/open/${id}`)
       .then(() => {
-        alert('URL copied to clipboard!');
+        alert('URL已复制到剪切板！');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -117,7 +125,7 @@ const Open = () => {
   const handleCopyEncryptedString = () => {
     navigator.clipboard.writeText(id)
       .then(() => {
-        alert('Encrypted string copied to clipboard!');
+        alert('加密字符串已复制到剪切板！');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -147,6 +155,7 @@ const Open = () => {
             {row.map((word, colIndex) => (
               <div
                 key={colIndex}
+                ref={el => cellRefs.current[rowIndex * 5 + colIndex] = el}
                 className={`cell ${marked[rowIndex][colIndex] ? 'marked' : ''}`}
                 onClick={() => handleClick(rowIndex, colIndex)}
               >
@@ -161,9 +170,7 @@ const Open = () => {
         <button onClick={handleCopyUrl}>分享链接</button>
         <button onClick={handleCopyEncryptedString}>分享加密字符串</button>
       </div>
-      <a href={`${domain}/#/create`}
-        target="_blank"
-        >创建你自己的宾果游戏！</a>
+      <a href={`${domain}/#/create`} target="_blank">创建你自己的宾果游戏！</a>
       <div ref={resultRef} style={{ display: 'none', padding: '10px', backgroundColor: 'white', width: 'fit-content', border: '1px solid #000' }}>
         <div className="header">
           <div className="title-description">
@@ -173,7 +180,7 @@ const Open = () => {
           </div>
           <div className="qr-code">
             <QRCode value={`${domain}/#/open/${id}`} size={128} />
-            <p style={{ fontSize: '0.5em'}}>扫码玩{title}</p>
+            <p style={{ fontSize: '0.8em'}}>扫码玩{title}</p>
           </div>
         </div>
         <div className="grid-container">
@@ -183,6 +190,7 @@ const Open = () => {
                 {row.map((word, colIndex) => (
                   <div
                     key={colIndex}
+                    ref={el => previewCellRefs.current[rowIndex * 5 + colIndex] = el}
                     className={`cell ${marked[rowIndex][colIndex] ? 'marked' : ''}`}
                     style={{
                       width: '60px',
@@ -192,7 +200,7 @@ const Open = () => {
                       justifyContent: 'center',
                       border: '1px solid #000',
                       boxSizing: 'border-box',
-                      fontSize: '1em',
+                      fontSize: '0.8em',
                     }}
                   >
                     {word}

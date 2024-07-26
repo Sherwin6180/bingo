@@ -15,6 +15,7 @@ const Create = () => {
   const [imageSrc, setImageSrc] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const resultRef = useRef();
+  const previewCellRefs = useRef([]);
 
   const handleGridChange = (rowIndex, colIndex, value) => {
     const newGrid = grid.map((row, rIdx) =>
@@ -38,16 +39,25 @@ const Create = () => {
     setCompressedString(compressed);
   };
 
+  const adjustFontSize = (cell, initialFontSize = 0.5) => {
+    let fontSize = initialFontSize; // 默认字体大小 em
+    cell.style.fontSize = `${fontSize}em`;
+    while (cell.scrollHeight > cell.clientHeight || cell.scrollWidth > cell.clientWidth) {
+      fontSize -= 0.1; // 逐步减少字体大小
+      if (fontSize <= 0.1) break; // 防止字体大小过小
+      cell.style.fontSize = `${fontSize}em`;
+    }
+  };
+
   const handleGenerateImage = async () => {
     if (resultRef.current) {
-      const cells = resultRef.current.querySelectorAll('.cell');
-      const originalStyles = [];
-      cells.forEach(cell => {
-        originalStyles.push({ width: cell.style.width, height: cell.style.height, fontSize: cell.style.fontSize });
-        cell.style.width = '60px';
-        cell.style.height = '60px';
-        cell.style.fontSize = '0.4em';
+      const previewCells = previewCellRefs.current;
+      previewCells.forEach(cell => {
+        if (cell) {
+          adjustFontSize(cell, 0.5);
+        }
       });
+
       resultRef.current.style.display = 'block';
       const canvas = await html2canvas(resultRef.current, { scale: 2, useCORS: true });
       const dataUrl = canvas.toDataURL('image/png');
@@ -60,7 +70,7 @@ const Create = () => {
     const url = `${domain}/#/open/${compressedString}`;
     navigator.clipboard.writeText(url)
       .then(() => {
-        alert('URL copied to clipboard!');
+        alert('URL已复制到剪切板！');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -70,7 +80,7 @@ const Create = () => {
   const handleCopyEncryptedString = () => {
     navigator.clipboard.writeText(compressedString)
       .then(() => {
-        alert('Encrypted string copied to clipboard!');
+        alert('加密字符串已复制到剪切板！');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -142,6 +152,7 @@ const Create = () => {
                     {row.map((word, colIndex) => (
                       <div
                         key={colIndex}
+                        ref={el => previewCellRefs.current[rowIndex * 5 + colIndex] = el}
                         className="cell"
                         style={{
                           width: '60px',
@@ -149,9 +160,8 @@ const Create = () => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          // border: '1px solid #000',
                           boxSizing: 'border-box',
-                          fontSize: '1em',
+                          fontSize: '0.5em',
                         }}
                       >
                         {word}
@@ -167,7 +177,7 @@ const Create = () => {
       )}
       {imageSrc && (
         <div>
-          <img src={imageSrc} alt="QR Code" style={{ maxWidth: '100%', height: 'auto' }} />
+          <img src={imageSrc} alt="Bingo Result" style={{ maxWidth: '100%', height: 'auto' }} />
         </div>
       )}
     </div>
