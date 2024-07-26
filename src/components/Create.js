@@ -39,16 +39,16 @@ const Create = () => {
     setCompressedString(compressed);
   };
 
-  const adjustFontSize = (cell, initialFontSize = 0.5) => {
+  const adjustFontSize = (cell, initialFontSize = 16) => {
     let fontSize = initialFontSize; // 默认字体大小 em
-    cell.style.fontSize = `${fontSize}em`;
+    cell.style.fontSize = `${fontSize}px`;
     while (cell.scrollHeight > cell.clientHeight || cell.scrollWidth > cell.clientWidth) {
-      fontSize -= 0.1; // 逐步减少字体大小
-      if (fontSize <= 0.1) break; // 防止字体大小过小
-      cell.style.fontSize = `${fontSize}em`;
+      fontSize -= 2; // 逐步减少字体大小
+      if (fontSize <= 1) break; // 防止字体大小过小
+      cell.style.fontSize = `${fontSize}px`;
     }
-    fontSize -= 0.1;
-    cell.style.fontSize = `${fontSize}em`;
+    fontSize -= 1;
+    cell.style.fontSize = `${fontSize}px`;
   };
 
   const handleGenerateImage = async () => {
@@ -56,7 +56,7 @@ const Create = () => {
       const previewCells = previewCellRefs.current;
       previewCells.forEach(cell => {
         if (cell) {
-          adjustFontSize(cell, 0.5);
+          adjustFontSize(cell, 16);
         }
       });
 
