@@ -4,7 +4,7 @@ import LZString from 'lz-string';
 import html2canvas from 'html2canvas';
 import '../CSS/Bingo.css'; // 使用相同的样式
 
-const domain = "https://sherwin6180.github.io/bingo";
+const domain = "https://www.bingogamemaker.com";
 
 const Create = () => {
   const emptyGrid = Array(5).fill().map(() => Array(5).fill(''));

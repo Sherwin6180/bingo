@@ -5,7 +5,7 @@ import html2canvas from 'html2canvas';
 import QRCode from 'qrcode.react';
 import '../CSS/Bingo.css';
 
-const domain = "https://sherwin6180.github.io/bingo";
+const domain = "https://www.bingogamemaker.com";
 
 const Open = () => {
   const { id } = useParams();
