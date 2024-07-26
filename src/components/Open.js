@@ -206,7 +206,7 @@ const Open = () => {
       </div>
       {imageSrc && (
         <div>
-          <h2>分享你的结果：</h2>
+          <h2>分享你的结果：（长按保存图片）</h2>
           <img src={imageSrc} alt="Bingo Result" style={{ maxWidth: '100%', height: 'auto' }} />
         </div>
       )}
