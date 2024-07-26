@@ -122,7 +122,7 @@ const Open = () => {
       const previewCells = previewCellRefs.current;
       previewCells.forEach(cell => {
         if (cell) {
-          adjustFontSize(cell, 0.4);
+          adjustFontSize(cell, 0.5);
         }
       });
 
@@ -137,7 +137,7 @@ const Open = () => {
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(`${domain}/#/open/${id}`)
       .then(() => {
-        alert('URL copied to clipboard!');
+        alert('URL已复制到剪切板！');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
@@ -147,7 +147,7 @@ const Open = () => {
   const handleCopyEncryptedString = () => {
     navigator.clipboard.writeText(id)
       .then(() => {
-        alert('Encrypted string copied to clipboard!');
+        alert('加密字符串已复制到剪切板！');
       })
       .catch((err) => {
         console.error('Failed to copy: ', err);
