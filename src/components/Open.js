@@ -84,13 +84,11 @@ const Open = () => {
   };
 
   const handleClick = (row, col) => {
-    if (gameOver) return;
-
     const newMarked = marked.map(row => row.slice());
     newMarked[row][col] = !newMarked[row][col]; // 切换标记状态
     setMarked(newMarked);
 
-    if (checkWin(newMarked)) {
+    if (!gameOver && checkWin(newMarked)) {
       setGameOver(true);
       setShowAnimation(true);
       setTimeout(() => {
